@@ -24,25 +24,22 @@ public class PlayerControl : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Wall")
+        switch (other.tag)
         {
-            GameOver(0.0f);
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-        }
-        if (other.tag == "End")
-        {
-            float yValue = transform.position.y;
-            GameOver(yValue);
-        }
-        if (other.tag == "Destructible")
-        {
-            GameOver(0.0f);
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-        }
-        if (other.tag == "Coin")
-        {
-            // Add points?
-            Destroy(other.gameObject);
+            
+            case "Wall":
+                GameOver(0.0f);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                break;
+            case "Destructible":
+                GameOver(0.0f);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                break;
+            
+            case "End":
+                float yValue = transform.position.y;
+                GameOver(yValue);
+                break;
         }
     }
 
