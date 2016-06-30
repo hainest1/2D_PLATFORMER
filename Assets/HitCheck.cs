@@ -3,6 +3,8 @@ using System.Collections;
 
 public class HitCheck : MonoBehaviour {
 
+    public Transform explosionPrefab;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -21,10 +23,12 @@ public class HitCheck : MonoBehaviour {
                 this.GetComponent<AudioSource>().Play();
                 other.gameObject.SetActive(false);
                 Debug.Log("Hit destructible");
+                DoExplode();
                 Destroy(this.gameObject);
                 break;
 
             case "Edge":
+                DoExplode();
                 Destroy(this.gameObject);
                 Debug.Log("Hit edge");
                 break;
@@ -34,10 +38,22 @@ public class HitCheck : MonoBehaviour {
                 // Do nothing here, in the future may be able to use physics.ignorecollider
                 break;
 
+            case "End":
+                //same as player
+                break;
+
             default:
+                DoExplode();
                 Destroy(this.gameObject);
                 Debug.Log("Hit non-actor");
                 break;
         }
+    }
+
+    void DoExplode()
+    {
+        Transform clone;
+        clone = Instantiate(explosionPrefab, this.transform.position, this.transform.rotation) as Transform;
+        Destroy(clone.gameObject, 1.0f);
     }
 }
