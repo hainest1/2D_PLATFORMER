@@ -12,15 +12,15 @@ public class HitCheck : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
+        if (Input.GetKey(KeyCode.M))
+            this.GetComponent<AudioSource>().Play();
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         switch (other.tag)
         {
             case "Destructible":
-                this.GetComponent<AudioSource>().Play();
                 other.gameObject.SetActive(false);
                 Debug.Log("Hit destructible");
                 DoExplode();
@@ -52,6 +52,7 @@ public class HitCheck : MonoBehaviour {
 
     void DoExplode()
     {
+        this.GetComponent<AudioSource>().Play();
         Transform clone;
         clone = Instantiate(explosionPrefab, this.transform.position, this.transform.rotation) as Transform;
         Destroy(clone.gameObject, 1.0f);
