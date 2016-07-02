@@ -4,9 +4,11 @@ using System.Collections;
 public class HitCheck : MonoBehaviour {
 
     public Transform explosionPrefab;
+    public float lowPitchRange = .75f;
+    public float highPitchRange = 1.05f;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 	
 	}
 	
@@ -56,6 +58,7 @@ public class HitCheck : MonoBehaviour {
 
     public void DoExplode()
     {
+        this.GetComponent<AudioSource>().pitch = Random.Range(lowPitchRange, highPitchRange);
         this.GetComponent<AudioSource>().Play();
         this.GetComponent<PolygonCollider2D>().enabled = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
