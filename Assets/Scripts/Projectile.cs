@@ -12,6 +12,9 @@ public class Projectile : MonoBehaviour {
     public float shotOneCooldown = 1.0f;
     public float shotTwoCooldown = 1.0f;
 
+    public AudioClip[] shootSounds;
+    public AudioClip[] nukeSounds;
+
     private bool shoot1CD = false;
     private bool shoot2CD = false;
 
@@ -22,7 +25,7 @@ public class Projectile : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetButtonDown("Fire1") && !shoot1CD)
+        if (Input.GetButton("Fire1") && !shoot1CD)
             Shoot();
         if (Input.GetButtonDown("Fire2") && !shoot2CD)
             DropBomb();
@@ -34,7 +37,7 @@ public class Projectile : MonoBehaviour {
         Transform clone;
         clone = Instantiate(rocketProjectile, rocketSpawnLocation.position, rocketSpawnLocation.rotation) as Transform;
         shoot1CD = true;
-        PlayShootSound();
+        PlayShootSound(1);
         //Collider2D cloneCollider = clone.GetComponent<Collider2D>();
         //Collider2D myCollider = GetComponent<Collider2D>();
         // Add force to the cloned object in the object's forward direction
@@ -49,7 +52,7 @@ public class Projectile : MonoBehaviour {
         Transform clone;
         clone = Instantiate(bombProjectile, bombSpawnLocation.position, bombSpawnLocation.rotation) as Transform;
         shoot2CD = true;
-        PlayShootSound();
+        PlayShootSound(2);
         Transform player = GameObject.FindGameObjectWithTag("Player").transform;
         // TODO: Change this to only set the X component of velocity for the bomb
         clone.GetComponent<Rigidbody2D>().velocity = player.GetComponent<Rigidbody2D>().velocity;
@@ -59,10 +62,23 @@ public class Projectile : MonoBehaviour {
         Invoke("ResetShoot2CD", shotTwoCooldown);
     }
 
-    void PlayShootSound()
+    void PlayShootSound(int n)
     {
-        this.GetComponent<AudioSource>().pitch = Random.Range(0.9f, 1.1f);
-        this.GetComponent<AudioSource>().Play();
+        if (n == 1)
+        {
+            this.GetComponent<AudioSource>().pitch = Random.Range(0.9f, 1.1f);
+            this.GetComponent<AudioSource>().clip = shootSounds[Random.Range(0, shootSounds.Length)];
+            this.GetComponent<AudioSource>().Play();
+        }
+        else if (n == 2)
+        {
+            this.GetComponent<AudioSource>().pitch = Random.Range(0.9f, 1.1f);
+            this.GetComponent<AudioSource>().clip = nukeSounds[Random.Range(0, nukeSounds.Length)];
+            this.GetComponent<AudioSource>().Play();
+        }
+        else
+            Debug.Log("Projectile.PlayShootSound error: int out of bounds!");
+
     }
 
     void ResetShoot1CD()
