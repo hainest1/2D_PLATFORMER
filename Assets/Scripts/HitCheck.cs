@@ -24,18 +24,17 @@ public class HitCheck : MonoBehaviour {
                 other.gameObject.SetActive(false);
                 Debug.Log("Hit destructible");
                 DoExplode();
-                Destroy(this.gameObject);
                 break;
 
             case "Edge":
                 DoExplode();
-                Destroy(this.gameObject);
                 Debug.Log("Hit edge");
                 break;
 
             case "Player":
                 // Ignores player
                 // Do nothing here, in the future may be able to use physics.ignorecollider
+                Debug.Log("Hit player");
                 break;
 
             case "End":
@@ -44,17 +43,26 @@ public class HitCheck : MonoBehaviour {
 
             default:
                 DoExplode();
-                Destroy(this.gameObject);
                 Debug.Log("Hit non-actor");
                 break;
         }
     }
 
-    void DoExplode()
+    void OnColliderExit2D(Collider2D other)
+    {
+        if (other.tag == "Edge")
+            DoExplode();
+    }
+
+    public void DoExplode()
     {
         this.GetComponent<AudioSource>().Play();
+        this.GetComponent<PolygonCollider2D>().enabled = false;
+        this.GetComponent<SpriteRenderer>().enabled = false;
+        this.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
         Transform clone;
         clone = Instantiate(explosionPrefab, this.transform.position, this.transform.rotation) as Transform;
         Destroy(clone.gameObject, 1.0f);
+        Destroy(this.gameObject, 2.0f);
     }
 }
