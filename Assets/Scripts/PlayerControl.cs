@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class PlayerControl : MonoBehaviour {
 
     public Transform explosionPrefab;
+    public AudioClip[] explosionSounds;
 
     public float jumpForce = 10.0f;
     public float horizontalSpeed = 15.0f;
@@ -53,8 +54,10 @@ public class PlayerControl : MonoBehaviour {
     void Demise()
     {
         this.GetComponent<AudioSource>().pitch = Random.Range(0.8f, 1.2f);
+        this.GetComponent<AudioSource>().clip = explosionSounds[Random.Range(0, explosionSounds.Length)];
         this.GetComponent<AudioSource>().Play();
         this.GetComponent<PolygonCollider2D>().enabled = false;
+        this.GetComponent<Projectile>().enabled = false;
         this.GetComponent<SpriteRenderer>().enabled = false;
         this.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
         Transform clone;
@@ -86,6 +89,14 @@ public class PlayerControl : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.Space))
             JumpCheck();
+        if (Input.GetKeyDown(KeyCode.N) && Time.timeScale >= 0.1f)
+            Time.timeScale -= 0.1f;
+        if (Input.GetKeyDown(KeyCode.M) && Time.timeScale <= 1.9f)
+            Time.timeScale += 0.1f;
+        // load dev zone
+        if (Input.GetKeyDown(KeyCode.Backspace) && SceneManager.GetActiveScene().buildIndex != 2)
+            SceneManager.LoadScene(2);
+
     }
 
     void JumpCheck()
