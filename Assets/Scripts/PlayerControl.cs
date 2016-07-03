@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour {
+
+    public Transform explosionPrefab;
 
     public float jumpForce = 10.0f;
     public float horizontalSpeed = 15.0f;
@@ -28,24 +31,52 @@ public class PlayerControl : MonoBehaviour {
         {
             
             case "Wall":
-                GameOver(0.0f);
-                GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                //YTeleport(0.0f);
+                //GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                Demise();
+
                 break;
             case "Destructible":
-                GameOver(0.0f);
-                GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                //YTeleport(0.0f);
+                //GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                Demise();
+
                 break;
             
             case "End":
                 float yValue = transform.position.y;
-                GameOver(yValue);
+                YTeleport(yValue);
                 break;
         }
+    }
+
+    void Demise()
+    {
+        this.GetComponent<AudioSource>().pitch = Random.Range(0.8f, 1.2f);
+        this.GetComponent<AudioSource>().Play();
+        this.GetComponent<PolygonCollider2D>().enabled = false;
+        this.GetComponent<SpriteRenderer>().enabled = false;
+        this.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+        Transform clone;
+        clone = Instantiate(explosionPrefab, this.transform.position, this.transform.rotation) as Transform;
+        Destroy(clone.gameObject, 1.5f);
+        Invoke("ReloadMenu", 1.5f);
+    }
+
+    void ReloadMenu()
+    {
+        Destroy(GameObject.Find("UI"));
+        SceneManager.LoadScene(0);
+
     }
 
     void AddForceAndControl()
     {
         if (GetComponent<Rigidbody2D>().velocity.x <= maxVelocity * 0.3f)
+        {
+            GetComponent<Rigidbody2D>().AddForce(new Vector2(20 * horizontalSpeed * Time.deltaTime, 0));
+        }
+        else if (GetComponent<Rigidbody2D>().velocity.x <= maxVelocity * 0.6f)
         {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(10 * horizontalSpeed * Time.deltaTime, 0));
         }
@@ -65,7 +96,7 @@ public class PlayerControl : MonoBehaviour {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0, jumpForce * Time.deltaTime));
     }
 
-    void GameOver(float y)
+    void YTeleport(float y)
     {
         transform.position = new Vector3(0, y, 0);
         GetComponent<TrailRenderer>().Clear();
